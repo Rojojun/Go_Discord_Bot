@@ -53,7 +53,10 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 
     // "!ping" 메시지를 감지하면 "Pong!"으로 응답합니다
     if m.Content == "!test" {
-        // s.ChannelMessageSend(m.ChannelID, "Test is succesful. Please do another test")
-		s.ChannelMessageSend("https://discord.gg/rKvwppj2", "Test is succesful. Please do another test")
+        s.ChannelMessageSend(m.ChannelID, "Test is succesful. Please do another test")
     }
+	
+	if m.Content == "!최마린 바보" {
+		s.ChannelMessageSend(m.ChannelID, "This is a best Question")		
+	}
 }
