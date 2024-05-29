@@ -10,8 +10,13 @@ import (
 )
 
 func main() {
+	// 설정 초기화
+	InitConfig()
+
+	// 설정 파일에서 토큰을 가져옵니다
+	token := GetToken()
+
     // 환경 변수에서 토큰을 가져옵니다 (또는 직접 토큰을 입력할 수도 있습니다)
-    token := os.Getenv("DISCORD_BOT_TOKEN")
     if token == "" {
         fmt.Println("No token provided. Please set DISCORD_BOT_TOKEN environment variable.")
         return
@@ -51,12 +56,16 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
         return
     }
 
-    // "!ping" 메시지를 감지하면 "Pong!"으로 응답합니다
     if m.Content == "!test" {
         s.ChannelMessageSend(m.ChannelID, "Test is succesful. Please do another test")
-    }
-	
-	if m.Content == "!최마린 바보" {
-		s.ChannelMessageSend(m.ChannelID, "This is a best Question")		
+    }  	
+	if m.Content == "!help" {
+		s.ChannelMessageSend(m.ChannelID,
+		"# 군필소녀 디스코드 봇 사용방법 🤖 \n " +	
+		"```" +
+		"!test : 테스트 명령어 입니다. \n" +
+		"\n" + 
+		"!test : 테스트 명령어 입니다. \n" +
+		"```")
 	}
 }
