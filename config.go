@@ -6,7 +6,7 @@ import (
 	"github.com/spf13/viper"
 )
 
-func InitConfig() {
+func Config() {
 	// viper 설정
 	viper.SetConfigName("config") // 설정 파일 이름 (확장자 제외)
 	viper.SetConfigType("yaml")   // 설정 파일 타입

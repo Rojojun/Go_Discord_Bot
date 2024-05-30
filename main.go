@@ -11,7 +11,7 @@ import (
 
 func main() {
 	// 설정 초기화
-	InitConfig()
+	Config()
 
 	// 설정 파일에서 토큰을 가져옵니다
 	token := GetToken()
