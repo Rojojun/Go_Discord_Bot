@@ -8,10 +8,9 @@ import (
 	"golang.org/x/oauth2/google"
 	"google.golang.org/api/option"
 	"google.golang.org/api/sheets/v4"
-	"honnef.co/go/tools/config"
 )
 
-func writeToSheet((data []interface{}) error {
+func writeToSheet(data []interface{}) error {
 	ctx := context.Background()
 	b, err := os.ReadFile("credentials.json")
 	if err != nil {
