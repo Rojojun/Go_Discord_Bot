@@ -29,8 +29,8 @@ func writeToSheet(data []interface{}) error {
         return fmt.Errorf("unable to retrieve Sheets client: %v", err)
 	}
 
-	spreadsheetId := "your-spreadsheet-id" // 스프레드시트 ID
-    rangeData := "Sheet1!A1"    		   // 데이터 입력 범위
+	spreadsheetId := "1mwTqKK0B2dif0BFbdl-AmVRhy87RwDQmBaoF1on3KCA"
+    rangeData := "시트1!A"    		   // 데이터 입력 범위
 
 	vr := &sheets.ValueRange{
         Values: [][]interface{}{data},

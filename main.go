@@ -48,24 +48,3 @@ func main() {
     // 디스코드 세션을 종료합니다
     dg.Close()
 }
-
-// 메시지가 생성될 때 호출되는 핸들러 함수입니다
-func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
-    // 봇이 보낸 메시지는 무시합니다
-    if m.Author.ID == s.State.User.ID {
-        return
-    }
-
-    if m.Content == "!test" {
-        s.ChannelMessageSend(m.ChannelID, "Test is succesful. Please do another test")
-    }  	
-	if m.Content == "!help" {
-		s.ChannelMessageSend(m.ChannelID,
-		"# 군필소녀 디스코드 봇 사용방법 🤖 \n " +	
-		"```" +
-		"!test : 테스트 명령어 입니다. \n" +
-		"\n" + 
-		"!test : 테스트 명령어 입니다. \n" +
-		"```")
-	}
-}
