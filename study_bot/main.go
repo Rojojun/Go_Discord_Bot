@@ -15,10 +15,11 @@ func main() {
 
 	// 설정 파일에서 토큰을 가져옵니다
 	token := GetToken()
+	dbConnection := getMongoConfig()
 
 	// 환경 변수에서 토큰을 가져옵니다 (또는 직접 토큰을 입력할 수도 있습니다)
-	if token == "" {
-		fmt.Println("No token provided. Please set DISCORD_BOT_TOKEN environment variable.")
+	if token == "" || dbConnection == nil {
+		fmt.Println("No token provided. Please set DISCORD_BOT_TOKEN or DB environment variable.")
 		return
 	}
 
