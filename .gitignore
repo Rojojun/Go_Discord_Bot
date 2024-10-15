@@ -1,0 +1,42 @@
+# Binaries for programs and plugins
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Test binary
+*.test
+
+# Output of the go coverage tool
+*.out
+
+# Dependency directories (for example, vendored packages)
+vendor/
+
+# Go workspace file
+go.work
+go.work.sum
+
+# IDE and Editor settings
+.idea/
+.vscode/
+
+# Go module files, you may want to include go.mod and go.sum in your repository, so typically you won't ignore them. If you do:
+# go.mod
+# go.sum
+
+# Logs
+*.log
+
+# Cache files
+*.cache/
+*.tmp/
+
+# If using MacOS, these system files may be included in your project directory.
+.DS_Store
+
+# Windows thumbnail cache
+Thumbs.db
+
+*.yaml
+*.iml
