@@ -27,24 +27,29 @@ func ConnectMongoDb(mongoConfig map[string]interface{}) {
 	fmt.Println("MongoDB에 연결되었습니다.")
 }
 
-func findUserByUserName(userName string, mongoConfig map[string]string) {
-	collection := client.Database(mongoConfig["database"]).Collection(mongoConfig["collection"])
+func existUserByUserName(userName string, mongoConfig map[string]interface{}) bool {
+	collection := client.Database(mongoConfig["database"].(string)).Collection(mongoConfig["collection"].(string))
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
 	filter := bson.M{"userName": userName}
 
-	_, err := collection.FindOne(ctx)
+	err := collection.FindOne(ctx, filter).Err()
+	if err == mongo.ErrNoDocuments {
+		return false
+	}
+	return true
 }
 
-func saveMentionedUser(userName string, mongoConfig map[string]string) {
-	collection := client.Database(mongoConfig["database"]).Collection(mongoConfig["collection"])
+func saveMentionedUser(userId, userName string, mongoConfig map[string]interface{}) {
+	collection := client.Database(mongoConfig["database"].(string)).Collection(mongoConfig["collection"].(string))
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
 	_, err := collection.InsertOne(ctx, map[string]interface{}{
+		"userId":    userId,
 		"userName":  userName,
 		"createdAt": time.Now(),
 	})

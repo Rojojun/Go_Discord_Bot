@@ -26,7 +26,17 @@ func messageCreate(s *discordgo.Session, message *discordgo.MessageCreate) {
 	if strings.HasPrefix(message.Content, "/add") {
 		if len(message.Mentions) > 0 {
 			for _, mention := range message.Mentions {
-				findUserByUserName()
+				if !existUserByUserName(mention.Username, getMongoConfig()) {
+					saveMentionedUser(mention.ID, mention.Username, getMongoConfig())
+					s.ChannelMessageSend(message.ChannelID,
+						"```"+
+							mention.Username+"님이 추가되었습니다!\n"+
+							"```")
+				}
+				s.ChannelMessageSend(message.ChannelID,
+					"```"+
+						mention.Username+"은 존재하는 유저입니다!\n"+
+						"```")
 			}
 		} else {
 			s.ChannelMessageSend(message.ChannelID,
