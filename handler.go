@@ -20,6 +20,7 @@ func messageCreate(s *discordgo.Session, message *discordgo.MessageCreate) {
 				"```"+
 				"/test : 테스트 명령어 입니다. \n" +
 				"/add @User : 사용자를 등록할 수 있습니다. \n"+
+				"find @User : 사용자가입 여부를 확인할 수 있습니다. \n"+
 				"\n"+
 				"```")
 	}
@@ -67,4 +68,5 @@ func messageCreate(s *discordgo.Session, message *discordgo.MessageCreate) {
 				}
 			}
 		}
+	}
 }
