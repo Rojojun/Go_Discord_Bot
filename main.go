@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"os/signal"
+	"study-bot-go/listener"
 	"syscall"
 
 	"github.com/bwmarrin/discordgo"
@@ -32,7 +33,7 @@ func main() {
 	}
 
 	// 메시지 생성 이벤트 핸들러를 등록합니다
-	dg.AddHandler(messageCreate)
+	dg.AddHandler(listener.MessageListener)
 
 	// WebSocket을 통해 디스코드와의 연결을 엽니다
 	err = dg.Open()

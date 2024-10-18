@@ -1,0 +1,20 @@
+package listener
+
+import (
+	"github.com/bwmarrin/discordgo"
+	"log"
+	"study-bot-go/handler"
+	"time"
+)
+
+func MessageListener(session *discordgo.Session, message *discordgo.MessageCreate) {
+	if message.Author.ID == session.State.User.ID {
+		return
+	}
+
+	if message.Content == "/schedule" {
+		handler.FindDiscordUser(session, message)
+		handler.DoActionWithPermission(session, message)
+		log.Printf("/schedule 메시지 전송 성공 : ", time.Now())
+	}
+}
