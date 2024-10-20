@@ -3,6 +3,7 @@ package listener
 import (
 	"github.com/bwmarrin/discordgo"
 	"log"
+	"strings"
 	"study-bot-go/handler"
 	"time"
 )
@@ -25,5 +26,13 @@ func MessageListener(session *discordgo.Session, message *discordgo.MessageCreat
 
 	if message.Content == "/test" {
 		handler.GetTestMessage(session, message)
+	}
+
+	if strings.HasPrefix(message.Content, "/add") {
+		handler.AddUserWithMessage(session, message)
+	}
+
+	if strings.HasPrefix(message.Content, "/find") {
+
 	}
 }

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"os/signal"
+	"study-bot-go/config"
 	"study-bot-go/listener"
 	"syscall"
 
@@ -12,10 +13,10 @@ import (
 
 func main() {
 	// 설정 초기화
-	Config()
+	config.Config()
 
-	token := GetToken()
-	dbConnection := GetMongoConfig()
+	token := config.GetToken()
+	dbConnection := config.GetMongoConfig()
 
 	ConnectMongoDb(dbConnection)
 
