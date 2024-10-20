@@ -13,10 +13,9 @@ import (
 var client *mongo.Client
 
 func ConnectMongoDb(mongoConfig map[string]interface{}) {
+	log.Println("MongoDB Connection Success")
 
-	uri := fmt.Sprintf("mongodb://%s/%s",
-		mongoConfig["uri"],
-		mongoConfig["database"])
+	uri := fmt.Sprintf("%s", mongoConfig["uri"].(string))
 
 	var err error
 	client, err = mongo.Connect(context.TODO(), options.Client().ApplyURI(uri))
