@@ -54,8 +54,8 @@ func messageCreate(s *discordgo.Session, message *discordgo.MessageCreate) {
 	if strings.HasPrefix(message.Content, "/add") {
 		if len(message.Mentions) > 0 {
 			for _, mention := range message.Mentions {
-				if !existUserByUserName(mention.Username, getMongoConfig()) {
-					saveMentionedUser(mention.ID, mention.Username, getMongoConfig())
+				if !existUserByUserName(mention.Username, GetMongoConfig()) {
+					saveMentionedUser(mention.ID, mention.Username, GetMongoConfig())
 					s.ChannelMessageSend(message.ChannelID,
 						"```"+
 							mention.Username+"님이 추가되었습니다!\n"+
@@ -80,7 +80,7 @@ func messageCreate(s *discordgo.Session, message *discordgo.MessageCreate) {
 	if strings.HasPrefix(message.Content, "/find") {
 		if len(message.Mentions) > 0 {
 			for _, mention := range message.Mentions {
-				if !existUserByUserName(mention.Username, getMongoConfig()) {
+				if !existUserByUserName(mention.Username, GetMongoConfig()) {
 					s.ChannelMessageSend(message.ChannelID,
 						"```"+
 							mention.Username+"님은 존재하지 않습니다. \n"+

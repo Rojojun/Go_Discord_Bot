@@ -28,6 +28,25 @@ func DoActionWithPermission(session *discordgo.Session, message *discordgo.Messa
 	}
 }
 
+func GetHelpMessage(session *discordgo.Session, message *discordgo.MessageCreate) {
+	if _, sendErr := session.ChannelMessageSend(message.ChannelID, ""+
+		"# Study-Bot (beta 0.1v) 명령어 🤖 \n "+
+		"```"+
+		"/test : 테스트 명령어 입니다. \n"+
+		"/add @User : 사용자를 등록할 수 있습니다. \n"+
+		"/find @User : 사용자가입 여부를 확인할 수 있습니다. \n"+
+		"\n"+
+		"```"); sendErr != nil {
+		log.Fatalln("/help 명령어 전송 실패 >>>> ", sendErr)
+	}
+}
+
+func GetTestMessage(session *discordgo.Session, message *discordgo.MessageCreate) {
+	if _, sendErr := session.ChannelMessageSend(message.ChannelID, "테스트 명령어 성공"); sendErr != nil {
+		log.Fatalln("서버 연결을 확인해주세요.")
+	}
+}
+
 func _____private__area_____() {}
 
 func findPermission(session *discordgo.Session, message *discordgo.MessageCreate) int64 {

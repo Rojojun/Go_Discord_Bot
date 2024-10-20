@@ -12,9 +12,18 @@ func MessageListener(session *discordgo.Session, message *discordgo.MessageCreat
 		return
 	}
 
+	if message.Content == "/help" {
+		handler.GetHelpMessage(session, message)
+		log.Println("/help 메시지 전송 성공 : ", time.Now())
+	}
+
 	if message.Content == "/schedule" {
 		handler.FindDiscordUser(session, message)
 		handler.DoActionWithPermission(session, message)
 		log.Printf("/schedule 메시지 전송 성공 : ", time.Now())
+	}
+
+	if message.Content == "/test" {
+		handler.GetTestMessage(session, message)
 	}
 }

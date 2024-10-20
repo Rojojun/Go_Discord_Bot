@@ -14,8 +14,8 @@ func main() {
 	// 설정 초기화
 	Config()
 
-	token := getToken()
-	dbConnection := getMongoConfig()
+	token := GetToken()
+	dbConnection := GetMongoConfig()
 
 	ConnectMongoDb(dbConnection)
 

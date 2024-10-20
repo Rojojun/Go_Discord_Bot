@@ -17,10 +17,10 @@ func Config() {
 	}
 }
 
-func getToken() string {
+func GetToken() string {
 	return viper.GetString("discord.token")
 }
 
-func getMongoConfig() map[string]interface{} {
+func GetMongoConfig() map[string]interface{} {
 	return viper.GetStringMap("mongo")
 }
