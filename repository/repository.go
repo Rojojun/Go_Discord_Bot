@@ -18,6 +18,19 @@ var (
 	client          *mongo.Client
 )
 
+func init() {
+	mongoConnection = config.GetMongoConfig()
+	retryCount = setRetryCount()
+	client = connectMongoDB()
+
+	// mongoConnection["database"] 및 ["collection"]이 nil인지 확인 후 처리
+	if mongoConnection["database"] == nil || mongoConnection["collection"] == nil {
+		log.Panic("MongoDB 설정이 잘못되었습니다.")
+	}
+
+	collection = client.Database(mongoConnection["database"].(string)).Collection(mongoConnection["collection"].(string))
+}
+
 func ExistUserByUserName(userName string) bool {
 	filter := bson.M{"userName": userName}
 
@@ -49,4 +62,11 @@ func setRetryCount() context.Context {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 	return ctx
+}
+
+// MongoDB 연결 함수
+func connectMongoDB() *mongo.Client {
+	// MongoDB 연결 로직 추가
+	// 클라이언트를 반환
+	return client
 }

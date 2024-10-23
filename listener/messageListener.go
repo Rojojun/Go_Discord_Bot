@@ -33,6 +33,6 @@ func MessageListener(session *discordgo.Session, message *discordgo.MessageCreat
 	}
 
 	if strings.HasPrefix(message.Content, "/find") {
-
+		handler.ExistUserByMessage(session, message)
 	}
 }
