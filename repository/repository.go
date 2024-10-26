@@ -12,14 +12,14 @@ import (
 )
 
 var (
-	mongoConnection = config.GetMongoConfig()
-	collection      = existUserByUserName()
-	retryCount      = setRetryCount()
+	mongoConnection map[string]interface{}
+	retryCount      context.Context
 	client          *mongo.Client
 )
 
 func init() {
 	mongoConnection = config.GetMongoConfig()
+	log.Printf("MongoDB 설정: %v\n", mongoConnection) // 설정 값 출력
 	retryCount = setRetryCount()
 	client = connectMongoDB()
 
@@ -28,10 +28,17 @@ func init() {
 		log.Panic("MongoDB 설정이 잘못되었습니다.")
 	}
 
-	collection = client.Database(mongoConnection["database"].(string)).Collection(mongoConnection["collection"].(string))
+	// MongoDB 연결 초기화
+	//client = connectMongoDB()
+	//if client == nil {
+	//	log.Panic("MongoDB 클라이언트 초기화 실패.")
+	//}
+
+	//collection = client.Database(mongoConnection["database"].(string)).Collection(mongoConnection["collection"].(string))
 }
 
 func ExistUserByUserName(userName string) bool {
+	collection := client.Database(mongoConnection["database"].(string)).Collection(mongoConnection["collection"].(string))
 	filter := bson.M{"userName": userName}
 
 	err := collection.FindOne(retryCount, filter).Err()
@@ -42,6 +49,7 @@ func ExistUserByUserName(userName string) bool {
 }
 
 func SaveMentionedUser(userId, userName string) {
+	collection := client.Database(mongoConnection["database"].(string)).Collection(mongoConnection["collection"].(string))
 	result, err := collection.InsertOne(retryCount, map[string]interface{}{
 		"userId":    userId,
 		"userName":  userName,

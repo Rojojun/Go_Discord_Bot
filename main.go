@@ -18,7 +18,16 @@ func main() {
 	token := config.GetToken()
 	dbConnection := config.GetMongoConfig()
 
-	ConnectMongoDb(dbConnection)
+	// MongoDB 설정 출력 확인
+	fmt.Println("Loaded MongoDB Config:", dbConnection)
+
+	// MongoDB 연결 시도
+	if dbConnection != nil {
+		ConnectMongoDb(dbConnection)
+	} else {
+		fmt.Println("MongoDB 설정이 없습니다. config.yaml 파일을 확인하세요.")
+		return
+	}
 
 	// 환경 변수에서 토큰을 가져옵니다 (또는 직접 토큰을 입력할 수도 있습니다)
 	if token == "" || dbConnection == nil {
