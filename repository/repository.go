@@ -7,7 +7,6 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"log"
-	"study-bot-go/config"
 	"time"
 )
 
@@ -17,25 +16,25 @@ var (
 	client          *mongo.Client
 )
 
-func init() {
-	mongoConnection = config.GetMongoConfig()
-	log.Printf("MongoDB 설정: %v\n", mongoConnection) // 설정 값 출력
-	retryCount = setRetryCount()
-	client = connectMongoDB()
-
-	// mongoConnection["database"] 및 ["collection"]이 nil인지 확인 후 처리
-	if mongoConnection["database"] == nil || mongoConnection["collection"] == nil {
-		log.Panic("MongoDB 설정이 잘못되었습니다.")
-	}
-
-	// MongoDB 연결 초기화
-	//client = connectMongoDB()
-	//if client == nil {
-	//	log.Panic("MongoDB 클라이언트 초기화 실패.")
-	//}
-
-	//collection = client.Database(mongoConnection["database"].(string)).Collection(mongoConnection["collection"].(string))
-}
+//func init() {
+//	mongoConnection = config.GetMongoConfig()
+//	log.Printf("MongoDB 설정: %v\n", mongoConnection) // 설정 값 출력
+//	retryCount = setRetryCount()
+//	client = connectMongoDB()
+//
+//	// mongoConnection["database"] 및 ["collection"]이 nil인지 확인 후 처리
+//	if mongoConnection["database"] == nil || mongoConnection["collection"] == nil {
+//		log.Panic("MongoDB 설정이 잘못되었습니다.")
+//	}
+//
+//	// MongoDB 연결 초기화
+//	//client = connectMongoDB()
+//	//if client == nil {
+//	//	log.Panic("MongoDB 클라이언트 초기화 실패.")
+//	//}
+//
+//	//collection = client.Database(mongoConnection["database"].(string)).Collection(mongoConnection["collection"].(string))
+//}
 
 func ExistUserByUserName(userName string) bool {
 	collection := client.Database(mongoConnection["database"].(string)).Collection(mongoConnection["collection"].(string))
