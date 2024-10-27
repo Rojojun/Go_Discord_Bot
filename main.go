@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"os"
 	"os/signal"
 	"study-bot-go/config"
@@ -13,7 +14,9 @@ import (
 
 func main() {
 	// 설정 초기화
+	log.Printf("START #1")
 	config.Config()
+	log.Println("START #2")
 
 	token := config.GetToken()
 	dbConnection := config.GetMongoConfig()
