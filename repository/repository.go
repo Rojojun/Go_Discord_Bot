@@ -14,7 +14,6 @@ import (
 
 var (
 	mongoConnection config.MongoConfig
-	retryCount      context.Context
 	client          *mongo.Client
 )
 

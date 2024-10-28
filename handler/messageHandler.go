@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"fmt"
 	"github.com/bwmarrin/discordgo"
 	"log"
 	"study-bot-go/exception"
@@ -20,9 +21,29 @@ func FindDiscordUser(session *discordgo.Session, message *discordgo.MessageCreat
 	log.Printf("유저 정보: %+v\n", member)
 }
 
+//func DoActionWithPermission(session *discordgo.Session, message *discordgo.MessageCreate) {
+//	userPermission := findPermission(session, message)
+//	if userPermission&discordgo.PermissionAdministrator != 0 {
+//		scheduler.Scheduler(session, message.ChannelID)
+//		sendSchedulerSetSuccessMassage(session, message)
+//	} else {
+//		sendSchedulerSetFailedMassage(session, message)
+//	}
+//}
+
 func DoActionWithPermission(session *discordgo.Session, message *discordgo.MessageCreate) {
+	// 서버의 소유자 ID 가져오기
+	guild, err := session.State.Guild(message.GuildID)
+	if err != nil {
+		fmt.Println("Error retrieving guild:", err)
+		return
+	}
+
+	userID := message.Author.ID
 	userPermission := findPermission(session, message)
-	if userPermission&discordgo.PermissionAdministrator != 0 {
+
+	// 메시지를 보낸 유저가 서버 오너인지 확인
+	if userID == guild.OwnerID || userPermission&discordgo.PermissionAdministrator == 0 || userPermission&discordgo.PermissionAdministrator == 8 {
 		scheduler.Scheduler(session, message.ChannelID)
 		sendSchedulerSetSuccessMassage(session, message)
 	} else {
