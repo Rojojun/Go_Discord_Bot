@@ -18,30 +18,45 @@ var (
 	client          *mongo.Client
 )
 
+// 유저 이름으로 유저 존재 여부 확인 함수
 func ExistUserByUserName(userName string) bool {
-	println("client ::::: ", client)
-	config.GetMongoConfig()
-	collection := client.Database(mongoConnection.Database).Collection(mongoConnection.Collection)
-	filter := bson.M{"userName": userName}
-
-	err := collection.FindOne(retryCount, filter).Err()
-	if errors.Is(err, mongo.ErrNoDocuments) {
+	client, err := connectMongoDB()
+	if err != nil {
+		log.Println("MongoDB 연결 오류:", err)
 		return false
 	}
-	return true
+	defer func(client *mongo.Client, ctx context.Context) {
+		_ = client.Disconnect(ctx)
+	}(client, context.Background())
+
+	collection := client.Database(config.GetMongoConfig().Database).Collection(config.GetMongoConfig().Collection)
+	filter := bson.M{"userName": userName}
+
+	err = collection.FindOne(context.Background(), filter).Err()
+	return err == nil || !errors.Is(err, mongo.ErrNoDocuments)
 }
 
+// 유저 정보 저장 함수
 func SaveMentionedUser(userId, userName string) {
-	collection := client.Database(mongoConnection.Database).Collection(mongoConnection.Collection)
-	result, err := collection.InsertOne(retryCount, map[string]interface{}{
+	client, err := connectMongoDB()
+	if err != nil {
+		log.Println("MongoDB 연결 오류:", err)
+		return
+	}
+	defer func(client *mongo.Client, ctx context.Context) {
+		_ = client.Disconnect(ctx)
+	}(client, context.Background())
+
+	collection := client.Database(config.GetMongoConfig().Database).Collection(config.GetMongoConfig().Collection)
+	_, err = collection.InsertOne(context.Background(), bson.M{
 		"userId":    userId,
 		"userName":  userName,
 		"createdAt": time.Now(),
 	})
 	if err != nil {
-		log.Println("사용자 저장 실패 : ", err)
+		log.Println("사용자 저장 실패:", err)
 	} else {
-		fmt.Println("사용자가 MongoDB에 저장되었습니다 : ", result.InsertedID)
+		fmt.Println("사용자가 MongoDB에 저장되었습니다.")
 	}
 }
 
@@ -55,20 +70,25 @@ func setRetryCount() context.Context {
 	return ctx
 }
 
-// MongoDB 연결 함수
-func connectMongoDB() *mongo.Client {
-	uri := mongoConnection.URI // MongoDB URI 가져오기
+// MongoDB 클라이언트를 반환하는 함수
+func connectMongoDB() (*mongo.Client, error) {
+	// MongoDB 설정
+	uri := config.GetMongoConfig().URI
 	clientOptions := options.Client().ApplyURI(uri)
-	client, err := mongo.Connect(retryCount, clientOptions)
+
+	// 컨텍스트와 클라이언트 생성
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	client, err := mongo.Connect(ctx, clientOptions)
 	if err != nil {
-		log.Fatalf("MongoDB 연결 실패: %v", err)
+		return nil, fmt.Errorf("MongoDB 연결 실패: %w", err)
 	}
 
 	// Ping the database to verify connection
-	if err := client.Ping(retryCount, nil); err != nil {
-		log.Fatalf("MongoDB Ping 실패: %v", err)
+	if err := client.Ping(ctx, nil); err != nil {
+		return nil, fmt.Errorf("MongoDB Ping 실패: %w", err)
 	}
 
 	fmt.Println("MongoDB에 연결되었습니다.")
-	return client
+	return client, nil
 }
