@@ -6,38 +6,22 @@ import (
 	"fmt"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 	"log"
+	"study-bot-go/config"
 	"time"
 )
 
 var (
-	mongoConnection map[string]interface{}
+	mongoConnection config.MongoConfig
 	retryCount      context.Context
 	client          *mongo.Client
 )
 
-//func init() {
-//	mongoConnection = config.GetMongoConfig()
-//	log.Printf("MongoDB 설정: %v\n", mongoConnection) // 설정 값 출력
-//	retryCount = setRetryCount()
-//	client = connectMongoDB()
-//
-//	// mongoConnection["database"] 및 ["collection"]이 nil인지 확인 후 처리
-//	if mongoConnection["database"] == nil || mongoConnection["collection"] == nil {
-//		log.Panic("MongoDB 설정이 잘못되었습니다.")
-//	}
-//
-//	// MongoDB 연결 초기화
-//	//client = connectMongoDB()
-//	//if client == nil {
-//	//	log.Panic("MongoDB 클라이언트 초기화 실패.")
-//	//}
-//
-//	//collection = client.Database(mongoConnection["database"].(string)).Collection(mongoConnection["collection"].(string))
-//}
-
 func ExistUserByUserName(userName string) bool {
-	collection := client.Database(mongoConnection["database"].(string)).Collection(mongoConnection["collection"].(string))
+	println("client ::::: ", client)
+	config.GetMongoConfig()
+	collection := client.Database(mongoConnection.Database).Collection(mongoConnection.Collection)
 	filter := bson.M{"userName": userName}
 
 	err := collection.FindOne(retryCount, filter).Err()
@@ -48,7 +32,7 @@ func ExistUserByUserName(userName string) bool {
 }
 
 func SaveMentionedUser(userId, userName string) {
-	collection := client.Database(mongoConnection["database"].(string)).Collection(mongoConnection["collection"].(string))
+	collection := client.Database(mongoConnection.Database).Collection(mongoConnection.Collection)
 	result, err := collection.InsertOne(retryCount, map[string]interface{}{
 		"userId":    userId,
 		"userName":  userName,
@@ -62,18 +46,29 @@ func SaveMentionedUser(userId, userName string) {
 }
 
 func existUserByUserName() *mongo.Collection {
-	return client.Database(mongoConnection["database"].(string)).Collection(mongoConnection["collection"].(string))
+	return client.Database(mongoConnection.Database).Collection(mongoConnection.Collection)
 }
 
 func setRetryCount() context.Context {
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	return ctx
 }
 
 // MongoDB 연결 함수
 func connectMongoDB() *mongo.Client {
-	// MongoDB 연결 로직 추가
-	// 클라이언트를 반환
+	uri := mongoConnection.URI // MongoDB URI 가져오기
+	clientOptions := options.Client().ApplyURI(uri)
+	client, err := mongo.Connect(retryCount, clientOptions)
+	if err != nil {
+		log.Fatalf("MongoDB 연결 실패: %v", err)
+	}
+
+	// Ping the database to verify connection
+	if err := client.Ping(retryCount, nil); err != nil {
+		log.Fatalf("MongoDB Ping 실패: %v", err)
+	}
+
+	fmt.Println("MongoDB에 연결되었습니다.")
 	return client
 }

@@ -7,15 +7,16 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"log"
+	"study-bot-go/config"
 	"time"
 )
 
 var client *mongo.Client
 
-func ConnectMongoDb(mongoConfig map[string]interface{}) {
+func ConnectMongoDb(mongoConfig config.MongoConfig) {
 	log.Println("MongoDB Connection Success")
 
-	uri := fmt.Sprintf("%s", mongoConfig["uri"].(string))
+	uri := fmt.Sprintf("%s", mongoConfig.URI)
 
 	var err error
 	client, err = mongo.Connect(context.TODO(), options.Client().ApplyURI(uri))

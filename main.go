@@ -13,24 +13,25 @@ import (
 
 func main() {
 	// 설정 초기화
-	config.Config()
+	config.LoadConfig()
+	//repository.Init()
 
-	token := config.GetToken()
-	dbConnection := config.GetMongoConfig()
+	token := config.GetDiscordToken()
+	dbConfig := config.GetMongoConfig()
 
 	// MongoDB 설정 출력 확인
-	fmt.Println("Loaded MongoDB Config:", dbConnection)
+	fmt.Println("Loaded MongoDB LoadConfig:", dbConfig)
 
 	// MongoDB 연결 시도
-	if dbConnection != nil {
-		ConnectMongoDb(dbConnection)
+	if dbConfig.URI != "" {
+		ConnectMongoDb(dbConfig)
 	} else {
 		fmt.Println("MongoDB 설정이 없습니다. config.yaml 파일을 확인하세요.")
 		return
 	}
 
 	// 환경 변수에서 토큰을 가져옵니다 (또는 직접 토큰을 입력할 수도 있습니다)
-	if token == "" || dbConnection == nil {
+	if token == "" || dbConfig.URI == "" {
 		fmt.Println("No token provided. Please set DISCORD_BOT_TOKEN or DB environment variable.")
 		return
 	}
