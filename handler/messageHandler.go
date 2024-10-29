@@ -83,8 +83,8 @@ func _____private__area_____() {}
 
 func addMentionedUsers(session *discordgo.Session, message *discordgo.MessageCreate, users []*discordgo.User) {
 	for _, mention := range users {
-		if !repository.ExistUserByUserName(mention.Username) {
-			repository.SaveMentionedUser(mention.ID, mention.Username)
+		if !repository.ExistUserByUserName(mention.Username, message.GuildID) {
+			repository.SaveMentionedUser(mention.ID, mention.Username, message.GuildID)
 			sendUserAddSuccessMessage(session, message, mention)
 			continue
 		}
@@ -96,7 +96,7 @@ func addMentionedUsers(session *discordgo.Session, message *discordgo.MessageCre
 
 func existAddUsers(session *discordgo.Session, message *discordgo.MessageCreate, users []*discordgo.User) {
 	for _, userInfo := range users {
-		if !repository.ExistUserByUserName(userInfo.ID) {
+		if !repository.ExistUserByUserName(userInfo.Username, message.GuildID) {
 			sendMessageOf(getUserNotExistMessage(userInfo.Username), session, message)
 		} else {
 			sendMessageOf(getUserAlreadyExistMessage(userInfo.Username), session, message)

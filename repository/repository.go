@@ -18,7 +18,7 @@ var (
 )
 
 // 유저 이름으로 유저 존재 여부 확인 함수
-func ExistUserByUserName(userName string) bool {
+func ExistUserByUserName(userName string, guildId string) bool {
 	client, err := connectMongoDB()
 	if err != nil {
 		log.Println("MongoDB 연결 오류:", err)
@@ -29,14 +29,17 @@ func ExistUserByUserName(userName string) bool {
 	}(client, context.Background())
 
 	collection := client.Database(config.GetMongoConfig().Database).Collection(config.GetMongoConfig().Collection)
-	filter := bson.M{"userName": userName}
+	filter := bson.M{"userName": userName, "guildId": guildId}
+
+	println(userName)
 
 	err = collection.FindOne(context.Background(), filter).Err()
+
 	return err == nil || !errors.Is(err, mongo.ErrNoDocuments)
 }
 
 // 유저 정보 저장 함수
-func SaveMentionedUser(userId, userName string) {
+func SaveMentionedUser(userId, userName string, guildId string) {
 	client, err := connectMongoDB()
 	if err != nil {
 		log.Println("MongoDB 연결 오류:", err)
@@ -50,6 +53,7 @@ func SaveMentionedUser(userId, userName string) {
 	_, err = collection.InsertOne(context.Background(), bson.M{
 		"userId":    userId,
 		"userName":  userName,
+		"guildId":   guildId,
 		"createdAt": time.Now(),
 	})
 	if err != nil {
