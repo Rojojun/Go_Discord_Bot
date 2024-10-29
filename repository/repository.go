@@ -28,10 +28,8 @@ func ExistUserByUserName(userName string, guildId string) bool {
 		_ = client.Disconnect(ctx)
 	}(client, context.Background())
 
-	collection := client.Database(config.GetMongoConfig().Database).Collection(config.GetMongoConfig().Collection)
+	collection := client.Database(config.GetMongoConfig().Database).Collection(config.GetMongoConfig().CollectionUser)
 	filter := bson.M{"userName": userName, "guildId": guildId}
-
-	println(userName)
 
 	err = collection.FindOne(context.Background(), filter).Err()
 
@@ -49,7 +47,7 @@ func SaveMentionedUser(userId, userName string, guildId string) {
 		_ = client.Disconnect(ctx)
 	}(client, context.Background())
 
-	collection := client.Database(config.GetMongoConfig().Database).Collection(config.GetMongoConfig().Collection)
+	collection := client.Database(config.GetMongoConfig().Database).Collection(config.GetMongoConfig().CollectionUser)
 	_, err = collection.InsertOne(context.Background(), bson.M{
 		"userId":    userId,
 		"userName":  userName,
@@ -63,9 +61,37 @@ func SaveMentionedUser(userId, userName string, guildId string) {
 	}
 }
 
-func existUserByUserName() *mongo.Collection {
-	return client.Database(mongoConnection.Database).Collection(mongoConnection.Collection)
+func DeleteUserByUserName(userName string, guildId string) {
+	client, err := connectMongoDB()
+	if err != nil {
+		log.Println("MongoDB 연결 오류:", err)
+	}
+	defer func(client *mongo.Client, ctx context.Context) {
+		_ = client.Disconnect(ctx)
+	}(client, context.Background())
+
+	collection := client.Database(config.GetMongoConfig().Database).Collection(config.GetMongoConfig().CollectionUser)
+	filter := bson.M{"userName": userName, "guildId": guildId}
+
+	_, err = collection.DeleteOne(context.Background(), filter)
 }
+
+func SaveDailyGoal() {
+	client, err := connectMongoDB()
+	if err != nil {
+		log.Println("MongoDB 연결 오류:", err)
+	}
+	defer func(client *mongo.Client, ctx context.Context) {
+		_ = client.Disconnect(ctx)
+	}(client, context.Background())
+
+	//collection := client.Database(config.GetMongoConfig().Database).Collection(config.GetMongoConfig().CollectionGoal)
+
+}
+
+//func existUserByUserName() *mongo.Collection {
+//	return client.Database(mongoConnection.Database).Collection(mongoConnection.Collection)
+//}
 
 func setRetryCount() context.Context {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)

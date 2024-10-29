@@ -15,9 +15,10 @@ type Config struct {
 }
 
 type MongoConfig struct {
-	URI        string `mapstructure:"uri"`
-	Database   string `mapstructure:"database"`
-	Collection string `mapstructure:"collection"`
+	URI            string `mapstructure:"uri"`
+	Database       string `mapstructure:"database"`
+	CollectionUser string `mapstructure:"collection-user"`
+	CollectionGoal string `mapstructure:"collection-goal"`
 }
 
 type DiscordConfig struct {

@@ -28,6 +28,14 @@ func MessageListener(session *discordgo.Session, message *discordgo.MessageCreat
 		handler.GetTestMessage(session, message)
 	}
 
+	if message.Content == "/bye" {
+		handler.GetResignMessage(session, message)
+	}
+
+	if message.Content == "/goal daily" {
+		handler.GetDailyGoalSettingMessage(session, message)
+	}
+
 	if strings.HasPrefix(message.Content, "/add") {
 		handler.AddUserWithMessage(session, message)
 	}

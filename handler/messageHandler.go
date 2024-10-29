@@ -21,16 +21,6 @@ func FindDiscordUser(session *discordgo.Session, message *discordgo.MessageCreat
 	log.Printf("유저 정보: %+v\n", member)
 }
 
-//func DoActionWithPermission(session *discordgo.Session, message *discordgo.MessageCreate) {
-//	userPermission := findPermission(session, message)
-//	if userPermission&discordgo.PermissionAdministrator != 0 {
-//		scheduler.Scheduler(session, message.ChannelID)
-//		sendSchedulerSetSuccessMassage(session, message)
-//	} else {
-//		sendSchedulerSetFailedMassage(session, message)
-//	}
-//}
-
 func DoActionWithPermission(session *discordgo.Session, message *discordgo.MessageCreate) {
 	// 서버의 소유자 ID 가져오기
 	guild, err := session.State.Guild(message.GuildID)
@@ -49,6 +39,17 @@ func DoActionWithPermission(session *discordgo.Session, message *discordgo.Messa
 	} else {
 		sendSchedulerSetFailedMassage(session, message)
 	}
+}
+
+func GetResignMessage(session *discordgo.Session, message *discordgo.MessageCreate) {
+	repository.DeleteUserByUserName(message.Author.Username, message.GuildID)
+	if _, sendErr := session.ChannelMessageSend(message.ChannelID, getResignMessage(message.Author.Username)); sendErr != nil {
+		log.Fatalln("/bye 명령어 전송 실패 >>>> ", sendErr)
+	}
+}
+
+func GetDailyGoalSettingMessage(session *discordgo.Session, message *discordgo.MessageCreate) {
+	repository.SaveDailyGoal()
 }
 
 func GetHelpMessage(session *discordgo.Session, message *discordgo.MessageCreate) {
