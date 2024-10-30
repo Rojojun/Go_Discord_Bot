@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/bwmarrin/discordgo"
 	"log"
+	"strings"
 	"study-bot-go/exception"
 	"study-bot-go/repository"
 	"study-bot-go/scheduler"
@@ -49,7 +50,37 @@ func GetResignMessage(session *discordgo.Session, message *discordgo.MessageCrea
 }
 
 func GetDailyGoalSettingMessage(session *discordgo.Session, message *discordgo.MessageCreate) {
-	repository.SaveDailyGoal()
+	user, err := repository.FindUserBy(message.Author.Username, message.GuildID)
+	if err != nil {
+		fmt.Println("User 조회 오류:", err)
+		return
+	}
+
+	if user == nil {
+		fmt.Println("해당 유저가 존재하지 않습니다.")
+		return
+	}
+
+	goal, err := repository.FindDailyGoalByOwnerId(user.Id)
+	if err != nil {
+		fmt.Println("Goal 조회 오류:", err)
+		return
+	}
+
+	if goal != nil {
+		if _, sendErr := session.ChannelMessageSend(message.ChannelID, "이미 목표가 등록되어 있습니다.\n`/find goal daily` 명령어로 목표를 확인해주세요."); sendErr != nil {
+			log.Fatalln("/goal daily 명령어 전송 실패 >>>> ", sendErr)
+		}
+		return
+	}
+
+	dailyGoal := strings.TrimPrefix(message.Content, "/goal daily ")
+
+	if _, sendErr := session.ChannelMessageSend(message.ChannelID, getAddDailyGoalMessage(dailyGoal)); sendErr != nil {
+		log.Fatalln("/goal daily 명령어 전송 실패 >>>> ", sendErr)
+	}
+
+	repository.SaveGoal(dailyGoal, user.Id, "DAILY")
 }
 
 func GetHelpMessage(session *discordgo.Session, message *discordgo.MessageCreate) {
@@ -77,6 +108,36 @@ func AddUserWithMessage(session *discordgo.Session, message *discordgo.MessageCr
 func ExistUserByMessage(session *discordgo.Session, message *discordgo.MessageCreate) {
 	if len(message.Mentions) > 0 {
 		existAddUsers(session, message, message.Mentions)
+	}
+}
+
+func GetUserHasGoal(session *discordgo.Session, message *discordgo.MessageCreate) {
+	user, err := repository.FindUserBy(message.Author.Username, message.GuildID)
+	if err != nil {
+		fmt.Println("User 조회 오류:", err)
+		return
+	}
+
+	if user == nil {
+		fmt.Println("해당 유저가 존재하지 않습니다.")
+		return
+	}
+
+	goal, err := repository.FindDailyGoalByOwnerId(user.Id)
+	if err != nil {
+		fmt.Println("Goal 조회 오류:", err)
+		return
+	}
+
+	if goal != nil {
+		if _, sendErr := session.ChannelMessageSend(message.ChannelID, "나의 일간 목표 : "+goal.Goal); sendErr != nil {
+			log.Fatalln("/find goal daily 명령어 전송 실패 >>>> ", sendErr)
+		}
+		return
+	} else {
+		if _, sendErr := session.ChannelMessageSend(message.ChannelID, "등록된 목표가 없습니다.\n`/goal daily 목표` 명령어로 목표를 등록해주세요."); sendErr != nil {
+			log.Fatalln("/find goal daily 명령어 전송 실패 >>>> ", sendErr)
+		}
 	}
 }
 

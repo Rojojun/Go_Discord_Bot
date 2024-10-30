@@ -32,7 +32,11 @@ func MessageListener(session *discordgo.Session, message *discordgo.MessageCreat
 		handler.GetResignMessage(session, message)
 	}
 
-	if message.Content == "/goal daily" {
+	if message.Content == "/find goal daily" {
+		handler.GetUserHasGoal(session, message)
+	}
+
+	if strings.HasPrefix(message.Content, "/goal daily") {
 		handler.GetDailyGoalSettingMessage(session, message)
 	}
 
