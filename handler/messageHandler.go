@@ -57,7 +57,9 @@ func GetDailyGoalSettingMessage(session *discordgo.Session, message *discordgo.M
 	}
 
 	if user == nil {
-		fmt.Println("해당 유저가 존재하지 않습니다.")
+		if _, sendErr := session.ChannelMessageSend(message.ChannelID, "유저를 등록하지 않았습니다.\n`/add @User`로 유저를 등록해 주세요."); sendErr != nil {
+			log.Fatalln("/find goal daily 명령어 전송 실패 >>>> ", sendErr)
+		}
 		return
 	}
 
@@ -119,7 +121,9 @@ func GetUserHasGoal(session *discordgo.Session, message *discordgo.MessageCreate
 	}
 
 	if user == nil {
-		fmt.Println("해당 유저가 존재하지 않습니다.")
+		if _, sendErr := session.ChannelMessageSend(message.ChannelID, "유저를 등록하지 않았습니다.\n`/add @User`로 유저를 등록해 주세요."); sendErr != nil {
+			log.Fatalln("/find goal daily 명령어 전송 실패 >>>> ", sendErr)
+		}
 		return
 	}
 

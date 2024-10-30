@@ -79,7 +79,7 @@ func FindDailyGoalByOwnerId(ownerId string) (*domain.Goal, error) {
 	err = collection.FindOne(context.Background(), filter).Decode(&goal)
 	if err != nil {
 		if errors.Is(err, mongo.ErrNoDocuments) {
-			log.Fatalln("해당 사용자와 서버의 문서를 찾을 수 없습니다.")
+			log.Println("해당 사용자와 서버의 문서를 찾을 수 없습니다.")
 			return nil, nil
 		}
 		log.Fatalln("MongoDB에서 문서 검색 오류:", err)
@@ -145,7 +145,7 @@ func FindUserBy(userName string, guildId string) (*domain.User, error) {
 	err = collection.FindOne(context.Background(), filter).Decode(&user)
 	if err != nil {
 		if errors.Is(err, mongo.ErrNoDocuments) {
-			log.Fatalln("해당 사용자와 서버의 문서를 찾을 수 없습니다.")
+			log.Println("해당 사용자와 서버의 문서를 찾을 수 없습니다.")
 			return nil, nil
 		}
 		log.Fatalln("MongoDB에서 문서 검색 오류:", err)
