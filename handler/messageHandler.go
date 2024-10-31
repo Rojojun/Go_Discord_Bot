@@ -145,6 +145,40 @@ func GetUserHasGoal(session *discordgo.Session, message *discordgo.MessageCreate
 	}
 }
 
+func GetDailyScheduleOnMessage(session *discordgo.Session, message *discordgo.MessageCreate) {
+	user, err := repository.FindUserBy(message.Author.Username, message.GuildID)
+	if err != nil {
+		fmt.Println("User 조회 오류:", err)
+		return
+	}
+
+	if user == nil {
+		if _, sendErr := session.ChannelMessageSend(message.ChannelID, "유저를 등록하지 않았습니다.\n`/add @User`로 유저를 등록해 주세요."); sendErr != nil {
+			log.Fatalln("/find goal daily 명령어 전송 실패 >>>> ", sendErr)
+		}
+		return
+	}
+
+	goal, err := repository.FindDailyGoalByOwnerId(user.Id)
+	if err != nil {
+		fmt.Println("Goal 조회 오류:", err)
+		return
+	}
+
+	if goal != nil {
+		if _, sendErr := session.ChannelMessageSend(message.ChannelID, "등록된 일일 목표가 없습니다.\n`/add goal daily`로 목표를 등록해 주세요."); sendErr != nil {
+			log.Fatalln("/on daily schedule 명령어 전송 실패 >>>> ", sendErr)
+		}
+		return
+	}
+
+	if _, sendErr := session.ChannelMessageSend(message.ChannelID, "일일 목표를 23시에 알람 설정 하였습니다.\n`/done daily`명령어로 목표완료시 체크해주세요"); sendErr != nil {
+		log.Fatalln("/goal daily 명령어 전송 실패 >>>> ", sendErr)
+	}
+
+	repository.SetSchedule(goal, user.Id, "DAILY")
+}
+
 func _____private__area_____() {}
 
 func addMentionedUsers(session *discordgo.Session, message *discordgo.MessageCreate, users []*discordgo.User) {

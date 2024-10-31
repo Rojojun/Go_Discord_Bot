@@ -155,6 +155,20 @@ func FindUserBy(userName string, guildId string) (*domain.User, error) {
 	return &user, nil
 }
 
+func SetSchedule(goal *domain.Goal, id string, s string) error {
+	client, err := connectMongoDB()
+	if err != nil {
+		log.Fatalln("MongoDB 연결 오류:", err)
+		return err
+	}
+	defer func(client *mongo.Client, ctx context.Context) {
+		_ = client.Disconnect(ctx)
+	}(client, context.Background())
+
+	collection := client.Database(config.GetMongoConfig().Database).Collection(config.GetMongoConfig().CollectionUser)
+	filter := bson.M{}
+}
+
 //func existUserByUserName() *mongo.Collection {
 //	return client.Database(mongoConnection.Database).Collection(mongoConnection.Collection)
 //}
