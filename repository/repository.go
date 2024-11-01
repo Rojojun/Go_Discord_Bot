@@ -165,8 +165,9 @@ func SetSchedule(goal *domain.Goal, id string, s string) error {
 		_ = client.Disconnect(ctx)
 	}(client, context.Background())
 
-	collection := client.Database(config.GetMongoConfig().Database).Collection(config.GetMongoConfig().CollectionUser)
-	filter := bson.M{}
+	//collection := client.Database(config.GetMongoConfig().Database).Collection(config.GetMongoConfig().CollectionUser)
+	//filter := bson.M{}
+	return err
 }
 
 //func existUserByUserName() *mongo.Collection {
