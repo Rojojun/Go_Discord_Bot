@@ -139,7 +139,7 @@ func GetUserHasGoal(session *discordgo.Session, message *discordgo.MessageCreate
 		}
 		return
 	} else {
-		if _, sendErr := session.ChannelMessageSend(message.ChannelID, "등록된 목표가 없습니다.\n`/goal daily 목표` 명령어로 목표를 등록해주세요."); sendErr != nil {
+		if _, sendErr := session.ChannelMessageSend(message.ChannelID, "등록된 목표가 없습니다.\n`!goal daily 목표` 명령어로 목표를 등록해주세요."); sendErr != nil {
 			log.Fatalln("/find goal daily 명령어 전송 실패 >>>> ", sendErr)
 		}
 	}
@@ -153,7 +153,7 @@ func GetDailyScheduleOnMessage(session *discordgo.Session, message *discordgo.Me
 	}
 
 	if user == nil {
-		if _, sendErr := session.ChannelMessageSend(message.ChannelID, "유저를 등록하지 않았습니다.\n`/add @User`로 유저를 등록해 주세요."); sendErr != nil {
+		if _, sendErr := session.ChannelMessageSend(message.ChannelID, "유저를 등록하지 않았습니다.\n`!add @User`로 유저를 등록해 주세요."); sendErr != nil {
 			log.Fatalln("/find goal daily 명령어 전송 실패 >>>> ", sendErr)
 		}
 		return
@@ -165,8 +165,8 @@ func GetDailyScheduleOnMessage(session *discordgo.Session, message *discordgo.Me
 		return
 	}
 
-	if goal != nil {
-		if _, sendErr := session.ChannelMessageSend(message.ChannelID, "등록된 일일 목표가 없습니다.\n`/add goal daily`로 목표를 등록해 주세요."); sendErr != nil {
+	if goal == nil {
+		if _, sendErr := session.ChannelMessageSend(message.ChannelID, "등록된 일일 목표가 없습니다.\n`!add goal daily`로 목표를 등록해 주세요."); sendErr != nil {
 			log.Fatalln("/on daily schedule 명령어 전송 실패 >>>> ", sendErr)
 		}
 		return
@@ -176,7 +176,7 @@ func GetDailyScheduleOnMessage(session *discordgo.Session, message *discordgo.Me
 		log.Fatalln("/goal daily 명령어 전송 실패 >>>> ", sendErr)
 	}
 
-	repository.SetSchedule(goal, user.Id, "DAILY")
+	repository.SetSchedule(goal, "DAILY")
 }
 
 func _____private__area_____() {}

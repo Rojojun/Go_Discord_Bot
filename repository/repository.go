@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"log"
@@ -155,7 +156,7 @@ func FindUserBy(userName string, guildId string) (*domain.User, error) {
 	return &user, nil
 }
 
-func SetSchedule(goal *domain.Goal, id string, s string) error {
+func SetSchedule(goal *domain.Goal, s string) error {
 	client, err := connectMongoDB()
 	if err != nil {
 		log.Fatalln("MongoDB 연결 오류:", err)
@@ -165,9 +166,18 @@ func SetSchedule(goal *domain.Goal, id string, s string) error {
 		_ = client.Disconnect(ctx)
 	}(client, context.Background())
 
-	//collection := client.Database(config.GetMongoConfig().Database).Collection(config.GetMongoConfig().CollectionUser)
-	//filter := bson.M{}
-	return err
+	collection := client.Database(config.GetMongoConfig().Database).Collection(config.GetMongoConfig().CollectionUser)
+	filter := bson.M{"_id": primitive.ObjectIDFromHex(goal.Id)}
+	update := bson.M{"$set": bson.M{"setSchedule": !goal.SetSchedule}}
+
+	println(!goal.SetSchedule)
+
+	_, err = collection.UpdateOne(context.Background(), filter, update)
+	if err != nil {
+		log.Fatalln("DB에서 에러가 발생하여 업데이트 오류가 발생하였습니다.", err)
+		return err
+	}
+	return nil
 }
 
 //func existUserByUserName() *mongo.Collection {
