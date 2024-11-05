@@ -36,7 +36,7 @@ func MessageListener(session *discordgo.Session, message *discordgo.MessageCreat
 		handler.GetUserHasGoal(session, message)
 	}
 
-	if message.Content == "!on daily schedule" {
+	if message.Content == "!switch daily schedule" {
 		handler.GetDailyScheduleOnMessage(session, message)
 	}
 
